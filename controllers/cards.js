@@ -35,16 +35,20 @@ module.exports.deleteCard = (req, res) => {
 };
 
 // Поставить Карточке лайк
-module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
-  req.params.cardId,
-  { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-  { new: true },
-)
-  .catch((err) => {
-    if (err.name === 'ValidationError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для постановки лайка карточки' });
-    if (err.name === 'CastError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
-    return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-  });
+module.exports.likeCard = (req, res) => {
+  const { cardId } = req.params;
+
+  Card.findByIdAndUpdate(
+    cardId,
+    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+    { new: true },
+  )
+    .catch((err) => {
+      if (err.name === 'ValidationError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для постановки лайка карточки' });
+      if (err.name === 'CastError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
+      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+    });
+};
 
 // Убрать у Карточки лайк
 module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
@@ -53,7 +57,7 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .catch((err) => {
-    if (err.name === 'ValidationError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для снятия лайка карточки' });
-    if (err.name === 'CastError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
+    if (err.name === 'ValidationError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
+    if (err.name === 'CastError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для снятия лайка карточки' });
     return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
   });

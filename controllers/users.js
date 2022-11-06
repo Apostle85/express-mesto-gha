@@ -45,7 +45,15 @@ module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
-    .then((newUser) => res.send({ data: newUser }))
+    .then((newUser) => {
+      if (newUser.name.length < 2
+        || newUser.name.length > 30
+        || newUser.about.length < 2
+        || newUser.about.length > 30) {
+        return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для обновления пользователя' });
+      }
+      return res.send({ data: newUser });
+    })
     .catch((err) => {
       if (err.name === 'CastError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемый пользователь не найден' });
       if (err.name === 'ValidationError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для обновления пользователя' });
