@@ -29,14 +29,15 @@ module.exports.deleteCard = (req, res) => {
 
   Card.deleteOne({ _id: cardId })
     .then((card) => {
-      if (!card) {
+      if (card.deletedCount === 0) {
         return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
       }
 
       return res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'CastError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
+      if (err.name === 'CastError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для постановки лайка карточки' });
+      if (err.name === 'ValidationError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
       return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
