@@ -1,16 +1,16 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
-# Проект Mesto фронтенд + бэкенд
+# Проект: Mesto Russia Server
 
+## Описание проекта
 
-## Директории
+В рамках данного проекта нужно было реализовать **серверную** составляющую проекта для фронтенда Mesto Russia с совмещением знаний об **Express.js** и **MongoDB**,  используя возможности **Node.js**. Также нужно было использовать и реализовать:
 
-`/routes` — папка с файлами роутера  
-`/controllers` — папка с файлами контроллеров пользователя и карточки   
-`/models` — папка с файлами описания схем пользователя и карточки  
-  
-Остальные директории вспомогательные, создаются при необходимости разработчиком
+* ODM Mongoose: схемы и модели
+* bodyParser
+* path
+* Обработка ошибок
 
-## Запуск проекта
+-------------------------------
+Еще потребовалось изучить **MongoDB Compass**  и **Postman**.
 
-`npm run start` — запускает сервер   
-`npm run dev` — запускает сервер с hot-reload
+Ссылка на репозиторий: https://github.com/Apostle85/express-mesto-gha.git
