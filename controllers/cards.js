@@ -28,6 +28,13 @@ module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
 
   Card.deleteOne({ _id: cardId })
+    .then((card) => {
+      if (!card) {
+        return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
+      }
+
+      return res.send({ data: card });
+    })
     .catch((err) => {
       if (err.name === 'CastError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
       return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
@@ -43,6 +50,13 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
+    .then((card) => {
+      if (!card) {
+        return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
+      }
+
+      return res.send({ data: card });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для постановки лайка карточки' });
       if (err.name === 'CastError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
@@ -56,6 +70,13 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { $pull: { likes: req.user._id } }, // убрать _id из массива
   { new: true },
 )
+  .then((card) => {
+    if (!card) {
+      return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
+    }
+
+    return res.send({ data: card });
+  })
   .catch((err) => {
     if (err.name === 'ValidationError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
     if (err.name === 'CastError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для снятия лайка карточки' });
