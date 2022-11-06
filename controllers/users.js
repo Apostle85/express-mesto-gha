@@ -14,10 +14,17 @@ module.exports.getUsers = (req, res) => {
 // Возвращает Пользователя по id
 module.exports.getUser = (req, res) => {
   const { userId } = req.params;
+
   User.findOne({ _id: userId })
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемый пользователь не найден' });
+      }
+
+      return res.send({ data: user });
+    })
     .catch((err) => {
-      if (err.name === 'CastError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемый пользователь не найден' });
+      if (err.name === 'CastError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для создания пользователя' });
       return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
