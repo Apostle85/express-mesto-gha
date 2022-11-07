@@ -1,9 +1,10 @@
 const Card = require('../models/card');
 
-const NOT_FOUND_ERROR = 404;
-const SERVER_ERROR = 500;
-const INCORRECT_DATA_ERROR = 400;
-const OK_STATUS = 200;
+const {
+  NOT_FOUND_ERROR,
+  SERVER_ERROR,
+  INCORRECT_DATA_ERROR,
+} = require('../constants/errors');
 
 // Возвращает все Карточки
 module.exports.getCards = (req, res) => {
@@ -34,10 +35,10 @@ module.exports.deleteCard = (req, res) => {
         return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
       }
 
-      return res.status(OK_STATUS).send({ data: card });
+      return res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'CastError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для постановки лайка карточки' });
+      if (err.name === 'CastError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для удаления карточки' });
       if (err.name === 'ValidationError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
       return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
@@ -57,7 +58,7 @@ module.exports.likeCard = (req, res) => {
         return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
       }
 
-      return res.status(OK_STATUS).send({ data: card });
+      return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
@@ -77,7 +78,7 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
       return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });
     }
 
-    return res.status(OK_STATUS).send({ data: card });
+    return res.send({ data: card });
   })
   .catch((err) => {
     if (err.name === 'ValidationError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемая карточка не найдена' });

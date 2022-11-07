@@ -1,8 +1,10 @@
 const User = require('../models/user');
 
-const NOT_FOUND_ERROR = 404;
-const SERVER_ERROR = 500;
-const INCORRECT_DATA_ERROR = 400;
+const {
+  NOT_FOUND_ERROR,
+  SERVER_ERROR,
+  INCORRECT_DATA_ERROR,
+} = require('../constants/errors');
 
 // Возвращает всех Пользователей
 module.exports.getUsers = (req, res) => {
@@ -44,18 +46,13 @@ module.exports.createUser = (req, res) => {
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((newUser) => {
-      if (newUser.name.length < 2
-        || newUser.name.length > 30
-        || newUser.about.length < 2
-        || newUser.about.length > 30) {
-        return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для обновления пользователя' });
-      }
+      if (!newUser) return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемый пользователь не найден' });
       return res.send({ data: newUser });
     })
     .catch((err) => {
-      if (err.name === 'CastError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемый пользователь не найден' });
+      if (err.name === 'CastError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для обновления пользователя' });
       if (err.name === 'ValidationError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для обновления пользователя' });
       return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
@@ -64,10 +61,13 @@ module.exports.updateProfile = (req, res) => {
 // Обновляет Аватар
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
-    .then((newUser) => res.send({ data: newUser }))
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+    .then((newUser) => {
+      if (!newUser) return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемый пользователь не найден' });
+      return res.send({ data: newUser });
+    })
     .catch((err) => {
-      if (err.name === 'CastError') return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемый пользователь не найден' });
+      if (err.name === 'CastError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для обновления пользователя' });
       if (err.name === 'ValidationError') return res.status(INCORRECT_DATA_ERROR).send({ message: 'Введены некорректные данные для обновления пользователя' });
       return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
