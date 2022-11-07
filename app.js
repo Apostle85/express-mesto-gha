@@ -1,6 +1,8 @@
-const { PORT } = process.env;
+// const { PORT = 3000 } = process.env;
+const PORT = 3000;
+
 const express = require('express');
-const path = require('path');
+// const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRouter = require('./routes/users');
@@ -24,16 +26,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
-app.use('/:wrongRoute', (req, res) => {
-  const { wrongRoute } = req.params;
-  if (wrongRoute !== 'users'
-  && wrongRoute !== 'cards'
-  && wrongRoute !== '') {
-    return res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемый ресурс не найден' });
-  }
-});
+app.use('/', (req, res) => res.status(NOT_FOUND_ERROR).send({ message: 'Запрашиваемый ресурс не найден' }));
 
-app.use(express.static(path.join(__dirname, 'public')));
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-});
+// app.use(express.static(path.join(__dirname, 'public')));
+app.listen(PORT);
