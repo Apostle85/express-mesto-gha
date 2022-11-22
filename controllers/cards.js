@@ -28,7 +28,8 @@ module.exports.deleteCard = (req, res, next) => {
 
   Card.findOne({ _id: cardId })
     .then((card) => {
-      if (req.user !== card.owner) {
+      if (!card) throw new NotFoundError('Запрашиваемая карточка не найдена');
+      if (req.user._id !== card.owner.toString()) {
         throw new NotEnoughRightsError('Недостаточно прав для удаления карточки');
       }
 
