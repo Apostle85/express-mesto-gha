@@ -2,10 +2,12 @@ const jwt = require('jsonwebtoken');
 const IncorrectProfileError = require('../errors/IncorrectProfileError');
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization || !authorization.startsWith('Bearer ')) next(new IncorrectProfileError('Необходима авторизация'));
-
-  const token = authorization.replace('Bearer ', '');
+  let token;
+  if (!req.cookies) {
+    const { authorization } = req.headers;
+    if (!authorization || !authorization.startsWith('Bearer ')) next(new IncorrectProfileError('Необходима авторизация'));
+    token = authorization.replace('Bearer ', '');
+  } else token = req.cookies.jwt;
   let payload;
   try {
     payload = jwt.verify(token, 'some-secret-key');
