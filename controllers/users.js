@@ -64,6 +64,7 @@ module.exports.createUser = (req, res, next) => {
       about,
       avatar,
     }))
+    .then((user) => User.findOne(user))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.code === 11000) next(new ExistingEmailError('Почта уже занята'));
@@ -130,9 +131,8 @@ module.exports.login = (req, res, next) => {
           maxAge: 3600000,
           httpOnly: true,
           sameSite: true,
-        })
-        .end();
-      return res.send({ message: 'Всё верно!' });
+        });
+      return res.send({ data: 'Авторизация прошла успешно!' });
     })
     .catch(next);
 };
