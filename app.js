@@ -33,7 +33,7 @@ app.post('/signup', celebrate({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
-    age: Joi.number().integer().min(18),
+    avatar: Joi.string().pattern(/^https?:\/\/(www.)?[A-Za-z0-9-.]+\.[a-z]+(\/[\w\-.~:/?#[\]@!$&'()*+,;=]*)?(#?)$/),
     about: Joi.string().min(2).max(30),
   }),
 }), createUser);

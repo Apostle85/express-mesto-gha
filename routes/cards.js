@@ -14,7 +14,7 @@ router.post('/', celebrate({
     name: Joi.string().required().alphanum().min(2)
       .max(30),
     link: Joi.string().required().alphanum()
-      .pattern(/^https?:\/\/(www.)?[A-Za-z0-9-]+\.[a-z]+(\/[\w\-.~:/?#[\]@!$&'()*+,;=]*)?(#?)$/),
+      .pattern(/^https?:\/\/(www.)?[A-Za-z0-9-.]+\.[a-z]+(\/[\w\-.~:/?#[\]@!$&'()*+,;=]*)?(#?)$/),
   }),
 }), createCard);
 router.delete('/:cardId', celebrate({

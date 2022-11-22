@@ -5,6 +5,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const IncorrectDataError = require('../errors/IncorrectDataError');
 const ExistingEmailError = require('../errors/ExistingEmailError');
+const IncorrectProfileError = require('../errors/IncorrectProfileError');
 
 // Возвращает всех Пользователей
 module.exports.getUsers = (req, res, next) => {
@@ -105,8 +106,23 @@ module.exports.updateAvatar = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
+  User
+    // .findUserByCredentials(req.body.email, req.body.password)
+    .findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        throw new IncorrectProfileError('Неправильные почта или пароль');
+      }
 
-  User.findUserByCredentials(email, password)
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new IncorrectProfileError('Неправильные почта или пароль');
+          }
+
+          return user;
+        });
+    })
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res

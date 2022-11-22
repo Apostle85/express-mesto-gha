@@ -10,7 +10,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     required: true,
     validate: {
-      validator: (v) => /^https?:\/\/(www.)?[A-Za-z0-9-]+\.[a-z]+(\/[\w\-.~:/?#[\]@!$&'()*+,;=]*)?(#?)$/.test(v),
+      validator: (v) => /^https?:\/\/(www.)?[A-Za-z0-9-.]+\.[a-z]+(\/[\w\-.~:/?#[\]@!$&'()*+,;=]*)?(#?)$/.test(v),
       message: (props) => `${props.value} - некорректный URL-адрес`,
     },
     type: String,
