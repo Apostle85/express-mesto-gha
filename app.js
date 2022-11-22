@@ -44,7 +44,7 @@ app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 app.use('/', (req, res, next) => next(new NotFoundError('Запрашиваемый ресурс не найден')));
 
-app.use(error);
 app.use(errors());
+app.use(error);
 // app.use(express.static(path.join(__dirname, 'public')));
 app.listen(PORT);
