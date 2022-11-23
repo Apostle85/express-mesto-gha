@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const regExHTTP = require('../constants/regularExpressions');
 // const bcrypt = require('bcryptjs');
 // const IncorrectProfileError = require('../errors/IncorrectProfileError');
 
@@ -28,7 +29,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     validate: {
-      validator: (v) => /^https?:\/\/(www.)?[A-Za-z0-9-.]+\.[a-z]+(\/[\w\-.~:/?#[\]@!$&'()*+,;=]*)?(#?)$/.test(v),
+      validator: (v) => regExHTTP.test(v),
       message: (props) => `${props.value} - некорректный URL-адрес`,
     },
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',

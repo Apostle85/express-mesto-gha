@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
@@ -55,7 +54,6 @@ module.exports.createUser = (req, res, next) => {
     avatar,
   } = req.body;
 
-  if (!validator.isEmail(email)) throw new IncorrectDataError('Введены некорректные данные для создания пользователя');
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       email,
@@ -64,12 +62,17 @@ module.exports.createUser = (req, res, next) => {
       about,
       avatar,
     }))
-    .then((user) => User.findOne(user))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send({
+      data: {
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      },
+    }))
     .catch((err) => {
       if (err.code === 11000) next(new ExistingEmailError('Почта уже занята'));
       if (err.name === 'ValidationError') next(new IncorrectDataError('Введены некорректные данные для создания пользователя'));
-      if (err.name === 'CastError') next(new IncorrectDataError('Введены некорректные данные для создания пользователя'));
       next(err);
     });
 };

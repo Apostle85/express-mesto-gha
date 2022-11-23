@@ -1,6 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
-
 const router = require('express').Router();
+const regExHTTP = require('../constants/regularExpressions');
+
 const {
   getUsers,
   getUser,
@@ -13,7 +14,7 @@ router.get('/', getUsers);
 router.get('/me', getProfile);
 router.get('/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().alphanum().length(24),
+    userId: Joi.string().length(24).hex().required(),
   }),
 }), getUser);
 router.patch('/me', celebrate({
@@ -24,7 +25,7 @@ router.patch('/me', celebrate({
 }), updateProfile);
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(/^https?:\/\/(www.)?[A-Za-z0-9-.]+\.[a-z]+(\/[\w\-.~:/?#[\]@!$&'()*+,;=]*)?(#?)$/),
+    avatar: Joi.string().pattern(regExHTTP),
   }),
 }), updateAvatar);
 

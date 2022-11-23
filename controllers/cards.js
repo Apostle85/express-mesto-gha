@@ -44,7 +44,6 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') next(new IncorrectDataError('Введены некорректные данные для удаления карточки'));
-      if (err.name === 'ValidationError') next(new NotFoundError('Запрашиваемая карточка не найдена'));
       next(err);
     });
 };
@@ -66,7 +65,6 @@ module.exports.likeCard = (req, res, next) => {
       return res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') next(new NotFoundError('Запрашиваемая карточка не найдена'));
       if (err.name === 'CastError') next(new IncorrectDataError('Введены некорректные данные для постановки лайка карточки'));
       next(err);
     });
@@ -86,7 +84,6 @@ module.exports.dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
     return res.send({ data: card });
   })
   .catch((err) => {
-    if (err.name === 'ValidationError') next(new NotFoundError('Запрашиваемая карточка не найдена'));
     if (err.name === 'CastError') next(new IncorrectDataError('Введены некорректные данные для снятия лайка карточки'));
     next(err);
   });
